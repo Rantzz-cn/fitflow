@@ -8,7 +8,7 @@ A modern, mobile-first fitness tracking Progressive Web App (PWA) built with van
 
 ## 🌐 Live Demo
 
-**[fitflow.studenthangout.live](https://fitflow.studenthangout.live)**
+**[fitnessapp-1ddbb.web.app](https://fitnessapp-1ddbb.web.app)**
 
 ## ✨ Features
 
