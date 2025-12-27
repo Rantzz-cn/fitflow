@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#8b5cf6" />
+<title>Privacy Policy - FitFlow</title>
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+<link rel="stylesheet" href="style.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  .legal-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  
+  .legal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .back-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+  }
+  
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    color: var(--text);
+  }
+  
+  .legal-header h1 {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .legal-header h1 svg {
+    color: var(--accent);
+  }
+  
+  .legal-content {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .last-updated {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+  }
+  
+  .policy-section {
+    margin-bottom: 28px;
+  }
+  
+  .policy-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .policy-section h2 svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .policy-section p, .policy-section li {
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  
+  .policy-section ul {
+    list-style: disc;
+    padding-left: 24px;
+  }
+  
+  .policy-section li {
+    margin-bottom: 8px;
+  }
+  
+  .highlight-box {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .highlight-box p {
+    color: #86efac;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .highlight-box svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  .contact-info {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .contact-info a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<div class="legal-page">
+  <div class="legal-header">
+    <a href="index.html" class="back-btn">
+      <i data-lucide="arrow-left"></i>
+    </a>
+    <h1><i data-lucide="shield"></i> Privacy Policy</h1>
+  </div>
+  
+  <div class="legal-content">
+    <p class="last-updated">Last updated: December 2024</p>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="eye"></i> Overview</h2>
+      <p>FitFlow ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our fitness tracking application.</p>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="database"></i> Information We Collect</h2>
+      <p>We collect the following types of information:</p>
+      <ul>
+        <li><strong>Account Information:</strong> Email address and display name when you create an account</li>
+        <li><strong>Health & Fitness Data:</strong> Weight, food logs, daily check-ins, and progress photos that you voluntarily enter</li>
+        <li><strong>Usage Data:</strong> How you interact with the app (features used, preferences)</li>
+        <li><strong>Device Information:</strong> Browser type, device type for optimization purposes</li>
+      </ul>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="lock"></i> How We Use Your Data</h2>
+      <ul>
+        <li>To provide and maintain the FitFlow service</li>
+        <li>To track your fitness progress and display statistics</li>
+        <li>To personalize your experience and recommendations</li>
+        <li>To send you reminders (only if you enable notifications)</li>
+        <li>To improve our app and user experience</li>
+      </ul>
+      
+      <div class="highlight-box">
+        <p><i data-lucide="shield-check"></i> We do NOT sell your personal data to third parties. Your health information stays private.</p>
+      </div>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="server"></i> Data Storage</h2>
+      <p>Your data is securely stored using Firebase (Google Cloud) infrastructure. We implement industry-standard security measures including:</p>
+      <ul>
+        <li>Encrypted data transmission (HTTPS/TLS)</li>
+        <li>Secure authentication via Firebase Auth</li>
+        <li>Data isolation - only you can access your data</li>
+      </ul>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="user-check"></i> Your Rights</h2>
+      <p>You have the right to:</p>
+      <ul>
+        <li><strong>Access:</strong> Export all your data at any time</li>
+        <li><strong>Rectification:</strong> Update or correct your information</li>
+        <li><strong>Deletion:</strong> Delete your account and all associated data</li>
+        <li><strong>Portability:</strong> Download your data in CSV format</li>
+      </ul>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="cookie"></i> Cookies & Local Storage</h2>
+      <p>We use browser local storage to:</p>
+      <ul>
+        <li>Remember your theme preference (dark/light mode)</li>
+        <li>Cache data for offline functionality</li>
+        <li>Maintain your login session</li>
+      </ul>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="baby"></i> Children's Privacy</h2>
+      <p>FitFlow is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.</p>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="refresh-cw"></i> Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last updated" date at the top of this page.</p>
+    </div>
+    
+    <div class="policy-section">
+      <h2><i data-lucide="mail"></i> Contact Us</h2>
+      <div class="contact-info">
+        <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+        <p><a href="mailto:support@fitflow.app">support@fitflow.app</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>
+

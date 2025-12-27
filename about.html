@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#8b5cf6" />
+<title>About - FitFlow</title>
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+<link rel="stylesheet" href="style.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  .legal-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  
+  .legal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .back-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+  }
+  
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    color: var(--text);
+  }
+  
+  .legal-header h1 {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .legal-header h1 svg {
+    color: var(--accent);
+  }
+  
+  .legal-content {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .app-info {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .app-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .app-logo svg {
+    width: 40px;
+    height: 40px;
+    color: white;
+  }
+  
+  .app-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  
+  .app-version {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  .about-section {
+    margin-bottom: 28px;
+  }
+  
+  .about-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .about-section h2 svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .about-section p, .about-section li {
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  
+  .about-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .about-section li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .about-section li svg {
+    width: 16px;
+    height: 16px;
+    color: #22c55e;
+    flex-shrink: 0;
+  }
+  
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  
+  .tech-badge {
+    padding: 6px 12px;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+  
+  .credits {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  
+  .credits a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  
+  .credits a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<div class="legal-page">
+  <div class="legal-header">
+    <a href="index.html" class="back-btn">
+      <i data-lucide="arrow-left"></i>
+    </a>
+    <h1><i data-lucide="info"></i> About</h1>
+  </div>
+  
+  <div class="legal-content">
+    <div class="app-info">
+      <div class="app-logo">
+        <i data-lucide="dumbbell"></i>
+      </div>
+      <div class="app-name">FitFlow</div>
+      <div class="app-version">Version 1.0.0</div>
+    </div>
+    
+    <div class="about-section">
+      <h2><i data-lucide="heart"></i> Our Mission</h2>
+      <p>FitFlow is designed to help you achieve your fitness goals through simple, intuitive tracking. We believe that small daily habits lead to big transformations.</p>
+    </div>
+    
+    <div class="about-section">
+      <h2><i data-lucide="sparkles"></i> Features</h2>
+      <ul>
+        <li><i data-lucide="check"></i> Food & macro tracking with meal categories</li>
+        <li><i data-lucide="check"></i> Weight progress with goal predictions</li>
+        <li><i data-lucide="check"></i> Daily check-ins with streak tracking</li>
+        <li><i data-lucide="check"></i> Progress photos with before/after comparison</li>
+        <li><i data-lucide="check"></i> Achievements & gamification</li>
+        <li><i data-lucide="check"></i> Personalized targets based on your BMI</li>
+        <li><i data-lucide="check"></i> Export your data anytime</li>
+        <li><i data-lucide="check"></i> Works offline as a PWA</li>
+      </ul>
+    </div>
+    
+    <div class="about-section">
+      <h2><i data-lucide="code"></i> Built With</h2>
+      <div class="tech-stack">
+        <span class="tech-badge">HTML5</span>
+        <span class="tech-badge">CSS3</span>
+        <span class="tech-badge">JavaScript</span>
+        <span class="tech-badge">Firebase</span>
+        <span class="tech-badge">Chart.js</span>
+        <span class="tech-badge">Lucide Icons</span>
+        <span class="tech-badge">PWA</span>
+      </div>
+    </div>
+    
+    <div class="credits">
+      <p>Made with ❤️ for fitness enthusiasts</p>
+      <p>© 2024 FitFlow. All rights reserved.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>
+

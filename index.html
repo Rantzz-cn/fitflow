@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#8b5cf6" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="FitFlow" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="description" content="Track your fitness journey with food logging, weight progress, and achievements" />
+<meta name="application-name" content="FitFlow" />
+<meta name="msapplication-TileColor" content="#8b5cf6" />
+
+<title>FitFlow - Track Your Fitness Journey</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json" />
+
+<!-- Favicons & App Icons -->
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="style.css" />
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- Preconnect for faster Firebase loading -->
+<link rel="preconnect" href="https://www.gstatic.com" />
+<link rel="preconnect" href="https://firestore.googleapis.com" />
+</head>
+<body>
+<div class="container">
+
+    <div class="header-row">
+        <h1><i data-lucide="dumbbell"></i> FitFlow</h1>
+        <div class="header-actions">
+            <div class="user-menu" id="userMenu">
+                <button class="user-btn" id="userBtn">
+                    <span class="user-avatar" id="userAvatar">?</span>
+                    <span class="user-name" id="userName">User</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+                <div class="user-dropdown hidden" id="userDropdown">
+                    <div class="dropdown-header">
+                        <span id="dropdownEmail">user@email.com</span>
+                    </div>
+                    <button id="editProfileBtn"><i data-lucide="user"></i> Edit Profile</button>
+                    <div class="dropdown-divider"></div>
+                    <a href="about.html" class="dropdown-link"><i data-lucide="info"></i> About</a>
+                    <a href="privacy.html" class="dropdown-link"><i data-lucide="shield"></i> Privacy Policy</a>
+                    <a href="terms.html" class="dropdown-link"><i data-lucide="file-text"></i> Terms of Service</a>
+                    <div class="dropdown-divider"></div>
+                    <button id="deleteAccountBtn" class="danger"><i data-lucide="trash-2"></i> Delete Account</button>
+                    <button id="logoutBtn"><i data-lucide="log-out"></i> Logout</button>
+                </div>
+            </div>
+            <button id="themeToggleBtn" class="theme-toggle" title="Toggle Theme"><i data-lucide="moon"></i></button>
+            <button id="installBtn" class="install-btn hidden" title="Install App"><i data-lucide="download"></i></button>
+        </div>
+    </div>
+
+    <!-- Email Verification Banner -->
+    <div id="verificationBanner" class="verification-banner hidden">
+        <div class="verification-content">
+            <i data-lucide="mail-warning"></i>
+            <div class="verification-text">
+                <strong>Verify your email</strong>
+                <span>Check your inbox for a verification link</span>
+            </div>
+        </div>
+        <button id="resendVerificationBtn" class="resend-btn">
+            <i data-lucide="send"></i> Resend
+        </button>
+    </div>
+
+    <!-- Daily Targets -->
+    <div class="card">
+        <div class="card-header">
+            <h2><i data-lucide="target"></i> Daily Targets</h2>
+            <button id="editTargetsBtn" class="icon-btn" title="Edit Targets"><i data-lucide="settings"></i></button>
+        </div>
+        
+        <!-- Display Mode -->
+        <div id="targetsDisplay" class="daily-targets">
+            <div class="target-card calories">
+                <p class="label">Calories</p>
+                <p class="value"><span id="displayCalTarget">2100</span> kcal</p>
+            </div>
+            <div class="target-card">
+                <p class="label">Protein</p>
+                <p class="value"><span id="displayProteinTarget">150</span> g</p>
+            </div>
+            <div class="target-card">
+                <p class="label">Carbs</p>
+                <p class="value"><span id="displayCarbsTarget">240</span> g</p>
+            </div>
+            <div class="target-card">
+                <p class="label">Fat</p>
+                <p class="value"><span id="displayFatTarget">60</span> g</p>
+            </div>
+        </div>
+        
+        <!-- Edit Mode (hidden by default) -->
+        <div id="targetsEdit" class="targets-edit hidden">
+            <div class="targets-edit-grid">
+                <div class="edit-field">
+                    <label>Calories (kcal)</label>
+                    <input type="number" id="inputCalTarget" value="2100" />
+                </div>
+                <div class="edit-field">
+                    <label>Protein (g)</label>
+                    <input type="number" id="inputProteinTarget" value="150" />
+                </div>
+                <div class="edit-field">
+                    <label>Carbs (g)</label>
+                    <input type="number" id="inputCarbsTarget" value="240" />
+                </div>
+                <div class="edit-field">
+                    <label>Fat (g)</label>
+                    <input type="number" id="inputFatTarget" value="60" />
+                </div>
+            </div>
+            <div class="edit-actions">
+                <button id="saveTargetsBtn"><i data-lucide="save"></i> Save Targets</button>
+                <button id="cancelTargetsBtn" class="secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid: Food Log / Streak / Check-In -->
+    <div class="grid">
+        <!-- Food Log -->
+        <div class="card food-log-card">
+            <h2><i data-lucide="utensils"></i> Food Log</h2>
+            
+            <!-- Recent Foods Section -->
+            <div id="recentFoodsSection" class="my-foods-section recent-foods-section">
+                <div class="my-foods-header" onclick="toggleRecentFoods()">
+                    <span><i data-lucide="history"></i> Recent Foods</span>
+                    <button type="button" class="icon-btn" id="toggleRecentFoodsBtn"><i data-lucide="chevron-down"></i></button>
+                </div>
+                <div id="recentFoodsList" class="my-foods-list hidden"></div>
+            </div>
+
+            <!-- My Foods Section (Quick Add) -->
+            <div id="myFoodsSection" class="my-foods-section">
+                <div class="my-foods-header" onclick="toggleMyFoods()">
+                    <span><i data-lucide="star"></i> My Foods (Quick Add)</span>
+                    <button type="button" class="icon-btn" id="toggleMyFoodsBtn"><i data-lucide="chevron-down"></i></button>
+                </div>
+                <div id="myFoodsList" class="my-foods-list hidden"></div>
+        </div>
+
+            <!-- Food Input Method Tabs -->
+            <div class="food-input-tabs">
+                <button class="food-input-tab active" data-tab="search">
+                    <i data-lucide="search"></i> Search Food
+                </button>
+                <button class="food-input-tab" data-tab="manual">
+                    <i data-lucide="pencil"></i> Manual Entry
+                </button>
+            </div>
+
+            <!-- USDA Food Search -->
+            <div class="food-input-panel" id="searchPanel">
+                <div class="search-input-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="usdaSearch" placeholder="Search foods (e.g., chicken breast, banana, rice)..." />
+                    <div id="searchLoading" class="search-spinner hidden">
+                        <i data-lucide="loader-2" class="spin"></i>
+                    </div>
+                </div>
+                <div id="usdaResults" class="search-results hidden"></div>
+            </div>
+
+            <!-- Manual Entry Panel -->
+            <div class="food-input-panel hidden" id="manualPanel">
+                <p class="entry-hint">Enter nutrition from food label or package:</p>
+            </div>
+
+            <!-- Shared: Meal Tag Selector (shown for all methods) -->
+            <div class="manual-entry-section">
+                <!-- Meal Tag Selector -->
+                <div class="meal-tag-selector">
+                    <button type="button" class="meal-tag active" data-meal="breakfast"><i data-lucide="sunrise"></i> Breakfast</button>
+                    <button type="button" class="meal-tag" data-meal="lunch"><i data-lucide="sun"></i> Lunch</button>
+                    <button type="button" class="meal-tag" data-meal="dinner"><i data-lucide="moon"></i> Dinner</button>
+                    <button type="button" class="meal-tag" data-meal="snack"><i data-lucide="cookie"></i> Snack</button>
+                </div>
+                
+                <input id="foodName" placeholder="Food name (e.g., Chicken Breast)" />
+                
+                <div class="macro-inputs-grid">
+                    <div class="macro-input-field">
+                        <label>Calories</label>
+                        <input id="foodCalories" type="number" placeholder="0" />
+                    </div>
+                    <div class="macro-input-field">
+                        <label>Protein (g)</label>
+                        <input id="foodProtein" type="number" placeholder="0" />
+                    </div>
+                    <div class="macro-input-field">
+                        <label>Carbs (g)</label>
+                        <input id="foodCarbs" type="number" placeholder="0" />
+                    </div>
+                    <div class="macro-input-field">
+                        <label>Fat (g)</label>
+                        <input id="foodFat" type="number" placeholder="0" />
+                    </div>
+      </div>  
+      
+                <div class="entry-actions">
+                    <button id="addFoodBtn"><i data-lucide="plus"></i> Add to Log</button>
+                    <button id="saveNewFoodBtn" type="button" onclick="saveManualToMyFoods()" class="secondary"><i data-lucide="save"></i> Save to My Foods</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Daily Summary -->
+        <section class="summary card">
+            <h2><i data-lucide="bar-chart-3"></i> Daily Summary</h2>
+
+        <div class="summary-cards">
+                <div class="summary-stat">
+                    <p class="label">Calories</p>
+                <p class="value"><span id="sumCalories">0</span> kcal</p>
+            </div>
+                <div class="summary-stat highlight">
+                <p class="label">Remaining</p>
+                <p class="value"><span id="remainingCalories">2100</span> kcal</p>
+            </div>
+                <div class="summary-stat">
+                <p class="label">Protein</p>
+                <p class="value"><span id="sumProtein">0</span> g</p>
+            </div>
+                <div class="summary-stat">
+                <p class="label">Carbs</p>
+                <p class="value"><span id="sumCarbs">0</span> g</p>
+            </div>
+                <div class="summary-stat">
+                <p class="label">Fat</p>
+                <p class="value"><span id="sumFat">0</span> g</p>
+            </div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div id="calProgress"></div>
+            </div>
+            <p class="progress-text">Daily Calorie Progress</p>
+        </div>
+
+            <!-- Calories by Meal -->
+            <div class="calories-by-meal" id="caloriesByMeal">
+                <div class="meal-cal" data-meal="breakfast">
+                    <i data-lucide="sunrise"></i>
+                    <span class="meal-name">Breakfast</span>
+                    <span class="meal-calories" id="calBreakfast">0</span>
+                </div>
+                <div class="meal-cal" data-meal="lunch">
+                    <i data-lucide="sun"></i>
+                    <span class="meal-name">Lunch</span>
+                    <span class="meal-calories" id="calLunch">0</span>
+                </div>
+                <div class="meal-cal" data-meal="dinner">
+                    <i data-lucide="moon"></i>
+                    <span class="meal-name">Dinner</span>
+                    <span class="meal-calories" id="calDinner">0</span>
+                </div>
+                <div class="meal-cal" data-meal="snack">
+                    <i data-lucide="cookie"></i>
+                    <span class="meal-name">Snack</span>
+                    <span class="meal-calories" id="calSnack">0</span>
+                </div>
+            </div>
+
+            <!-- Macro Pie Chart -->
+            <div class="macro-chart-container">
+                <canvas id="macroChart" width="200" height="200"></canvas>
+                <div class="macro-legend">
+                    <div class="legend-item"><span class="legend-dot protein"></span> Protein</div>
+                    <div class="legend-item"><span class="legend-dot carbs"></span> Carbs</div>
+                    <div class="legend-item"><span class="legend-dot fat"></span> Fat</div>
+                </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Food</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th>
+                </tr>
+            </thead>
+            <tbody id="foodTable"></tbody>
+        </table>
+    </section>
+
+</div>
+
+    <!-- Combined Check-In Section -->
+    <div class="checkin-section">
+        <!-- Streak Display -->
+        <div class="card streak-card-new">
+            <div class="streak-header">
+                <div class="streak-fire"><i data-lucide="flame"></i></div>
+                <div class="streak-info">
+                    <span class="streak-number" id="streakCount">0</span>
+                    <span class="streak-label">Day Streak</span>
+                </div>
+            </div>
+            <div id="streakVisual" class="streak-visual"></div>
+            <div id="streakMilestones" class="streak-milestones"></div>
+            <canvas id="fireworksCanvas" class="fireworks-canvas"></canvas>
+        </div>
+
+        <!-- Daily Check-In Form -->
+        <div class="card checkin-card">
+            <h2><i data-lucide="clipboard-check"></i> Daily Check-In</h2>
+            
+            <!-- Daily Affirmation -->
+            <div class="daily-affirmation" id="dailyAffirmation">
+                <span class="affirmation-text">"Your only limit is you."</span>
+            </div>
+            
+            <div class="checkin-form">
+                <div class="checkin-row">
+                    <div class="checkin-field">
+                        <label>Weight</label>
+                        <div class="input-with-unit">
+                            <input id="weight" type="number" placeholder="0" step="0.1" />
+                            <span class="unit">kg</span>
+                        </div>
+                    </div>
+                    <div class="checkin-field">
+                        <label>Workout</label>
+                        <select id="workout">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="checkin-field full">
+                    <label>Notes</label>
+                    <textarea id="notes" rows="2" placeholder="How do you feel today?"></textarea>
+                </div>
+                <div class="checkin-actions">
+                    <button id="saveStatusBtn"><i data-lucide="check"></i> Save Check-In</button>
+                    <button id="resetStreakBtn" class="secondary small"><i data-lucide="rotate-ccw"></i> Reset</button>
+                </div>
+                
+                <!-- Reminder Settings -->
+                <div class="reminder-section">
+                    <div class="reminder-toggle">
+                        <label class="toggle-label">
+                            <i data-lucide="bell"></i>
+                            <span>Daily Reminder</span>
+                        </label>
+                        <label class="switch">
+                            <input type="checkbox" id="reminderToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="reminder-time hidden" id="reminderTimeSection">
+                        <input type="time" id="reminderTime" value="09:00">
+                        <button id="saveReminderBtn" class="small"><i data-lucide="save"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card weight-progress-card">
+        <div class="card-header">
+            <h2><i data-lucide="scale"></i> Weight Progress</h2>
+            <button id="editGoalWeightBtn" class="icon-btn" title="Set Goal Weight"><i data-lucide="settings"></i></button>
+        </div>
+        
+        <!-- Goal Weight Display -->
+        <div id="goalWeightSection" class="goal-weight-display">
+            <div class="goal-info">
+                <div class="goal-stat">
+                    <span class="goal-label">Current</span>
+                    <span class="goal-value" id="currentWeightDisplay">-- kg</span>
+                </div>
+                <div class="goal-arrow">→</div>
+                <div class="goal-stat target">
+                    <span class="goal-label">Goal</span>
+                    <span class="goal-value" id="goalWeightValue">-- kg</span>
+                </div>
+                <div class="goal-stat progress">
+                    <span class="goal-label">To Go</span>
+                    <span class="goal-value" id="weightToGoDisplay">-- kg</span>
+                </div>
+            </div>
+            <div class="goal-progress-bar">
+                <div id="goalWeightProgress"></div>
+            </div>
+            
+            <!-- Weight Prediction -->
+            <div id="weightPrediction" class="weight-prediction">
+                <span class="prediction-icon"><i data-lucide="calendar"></i></span>
+                <span class="prediction-text" id="predictionText">Add weight data to see prediction</span>
+            </div>
+        </div>
+        
+        <!-- Goal Weight Edit (hidden by default) -->
+        <div id="goalWeightEdit" class="goal-weight-edit hidden">
+            <div class="edit-row">
+                <label>Goal Weight (kg)</label>
+                <input type="number" id="inputGoalWeight" placeholder="e.g., 68" step="0.1" />
+            </div>
+            <div class="edit-actions">
+                <button id="saveGoalWeightBtn"><i data-lucide="save"></i> Save Goal</button>
+                <button id="cancelGoalWeightBtn" class="secondary">Cancel</button>
+            </div>
+        </div>
+        
+        <canvas id="weightChart" height="200"></canvas>
+    </div>
+
+    <!-- Weekly Stats Summary -->
+    <div class="card weekly-stats">
+        <h2><i data-lucide="trending-up"></i> Weekly Stats</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-value" id="weeklyCheckIns">0</p>
+                <p class="stat-label">Check-ins</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value" id="weeklyWorkouts">0</p>
+                <p class="stat-label">Workouts</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value" id="weeklyAvgCalories">0</p>
+                <p class="stat-label">Avg Calories</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value" id="weeklyAvgWeight">--</p>
+                <p class="stat-label">Avg Weight</p>
+            </div>
+        </div>
+        <div class="weekly-progress">
+            <div class="progress-item">
+                <span class="progress-label">Weekly Goal (7 days)</span>
+                <div class="progress-bar">
+                    <div id="weeklyGoalProgress"></div>
+                </div>
+                <span class="progress-percent" id="weeklyGoalPercent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Photos -->
+    <div class="card progress-photos-card">
+        <div class="card-header">
+            <h2><i data-lucide="camera"></i> Progress Photos</h2>
+            <button id="addPhotoBtn" class="icon-btn" title="Add Photo"><i data-lucide="plus"></i></button>
+        </div>
+        
+        <div class="photos-empty" id="photosEmpty">
+            <i data-lucide="image"></i>
+            <p>No photos yet</p>
+            <span>Take progress photos to track your transformation</span>
+        </div>
+        
+        <div class="photos-gallery hidden" id="photosGallery"></div>
+        
+        <div class="photos-compare hidden" id="photosCompare">
+            <div class="compare-header">
+                <h3><i data-lucide="columns"></i> Compare Progress</h3>
+                <button id="closeCompareBtn" class="icon-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div class="compare-container">
+                <div class="compare-side">
+                    <select id="compareLeft"></select>
+                    <div class="compare-photo" id="compareLeftPhoto"></div>
+                </div>
+                <div class="compare-divider"><i data-lucide="arrow-right"></i></div>
+                <div class="compare-side">
+                    <select id="compareRight"></select>
+                    <div class="compare-photo" id="compareRightPhoto"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="photos-actions hidden" id="photosActions">
+            <button id="comparePhotosBtn" class="btn-secondary">
+                <i data-lucide="columns"></i> Compare
+            </button>
+        </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="card achievements-card">
+        <div class="card-header">
+            <h2><i data-lucide="trophy"></i> Achievements</h2>
+            <div class="achievements-header-actions">
+                <span class="achievements-count" id="achievementsCount">0/0</span>
+                <button id="shareAchievementsBtn" class="icon-btn share-btn" title="Share Achievements">
+                    <i data-lucide="share-2"></i>
+                </button>
+            </div>
+        </div>
+        <div class="achievements-grid" id="achievementsGrid"></div>
+    </div>
+
+    <!-- History Selector -->
+    <div class="card">
+        <h2><i data-lucide="calendar"></i> View History</h2>
+        <input type="date" id="historyDate" />
+        <button id="viewHistoryBtn"><i data-lucide="eye"></i> View</button>
+    </div>
+
+    <!-- Export Data -->
+    <div class="card export-card">
+        <div class="card-header">
+            <h2><i data-lucide="download"></i> Export Data</h2>
+        </div>
+        <p class="export-desc">Download your data for backup or analysis</p>
+        <div class="export-options">
+            <button id="exportFoodLogsBtn" class="export-btn">
+                <i data-lucide="utensils"></i>
+                <span>Food Logs</span>
+            </button>
+            <button id="exportWeightBtn" class="export-btn">
+                <i data-lucide="scale"></i>
+                <span>Weight History</span>
+            </button>
+            <button id="exportAllBtn" class="export-btn primary">
+                <i data-lucide="file-down"></i>
+                <span>Export All</span>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Photo Upload Modal -->
+<div id="photoModal" class="modal hidden">
+    <div class="modal-content photo-upload-modal">
+        <div class="photo-upload-header">
+            <i data-lucide="camera"></i>
+            <h2>Add Progress Photo</h2>
+        </div>
+        
+        <div class="photo-preview-container">
+            <div class="photo-preview" id="photoPreview">
+                <i data-lucide="image-plus"></i>
+                <span>Click or drag to add photo</span>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" hidden>
+        </div>
+        
+        <div class="photo-details">
+            <div class="form-field">
+                <label><i data-lucide="calendar"></i> Date</label>
+                <input type="date" id="photoDate">
+            </div>
+            <div class="form-field">
+                <label><i data-lucide="tag"></i> Label (optional)</label>
+                <input type="text" id="photoLabel" placeholder="e.g., Front, Side, Back">
+            </div>
+        </div>
+        
+        <div class="photo-modal-actions">
+            <button id="cancelPhotoBtn" class="btn-secondary">Cancel</button>
+            <button id="savePhotoBtn" class="btn-primary" disabled>
+                <i data-lucide="save"></i> Save Photo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- Offline Indicator -->
+<div id="offlineIndicator" class="offline-indicator">
+    <i data-lucide="wifi-off"></i>
+    <span>You're offline</span>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" class="modal">
+    <div class="auth-decoration">
+        <div class="auth-orb orb-1"></div>
+        <div class="auth-orb orb-2"></div>
+        <div class="auth-orb orb-3"></div>
+    </div>
+    <div class="modal-content auth-modal">
+        <div class="auth-header">
+            <div class="auth-icon-wrapper">
+                <i data-lucide="dumbbell"></i>
+            </div>
+            <h2>FitFlow</h2>
+            <p>Your journey to a healthier you starts here</p>
+        </div>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Login</button>
+            <button class="auth-tab" data-tab="signup">Sign Up</button>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form">
+            <div class="form-field">
+                <label><i data-lucide="mail"></i> Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" required>
+            </div>
+            <div class="form-field">
+                <label><i data-lucide="lock"></i> Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required>
+            </div>
+            <a href="#" id="forgotPasswordLink" class="forgot-password-link">Forgot password?</a>
+            <button type="submit" class="auth-btn">
+                <i data-lucide="log-in"></i> Login
+            </button>
+            <p class="auth-error hidden" id="loginError"></p>
+        </form>
+        
+        <!-- Forgot Password Form -->
+        <form id="forgotPasswordForm" class="auth-form hidden">
+            <div class="forgot-header">
+                <i data-lucide="key-round"></i>
+                <h3>Reset Password</h3>
+                <p>Enter your email and we'll send you a reset link</p>
+            </div>
+            <div class="form-field">
+                <label><i data-lucide="mail"></i> Email</label>
+                <input type="email" id="resetEmail" placeholder="your@email.com" required>
+            </div>
+            <button type="submit" class="auth-btn">
+                <i data-lucide="send"></i> Send Reset Link
+            </button>
+            <p class="auth-error hidden" id="resetError"></p>
+            <p class="auth-success hidden" id="resetSuccess"></p>
+            <a href="#" id="backToLogin" class="back-to-login">
+                <i data-lucide="arrow-left"></i> Back to login
+            </a>
+        </form>
+        
+        <!-- Signup Form -->
+        <form id="signupForm" class="auth-form hidden">
+            <div class="form-field">
+                <label><i data-lucide="user"></i> Name</label>
+                <input type="text" id="signupName" placeholder="Your name" required>
+            </div>
+            <div class="form-field">
+                <label><i data-lucide="mail"></i> Email</label>
+                <input type="email" id="signupEmail" placeholder="your@email.com" required>
+            </div>
+            <div class="form-field">
+                <label><i data-lucide="lock"></i> Password</label>
+                <input type="password" id="signupPassword" placeholder="Min 6 characters" required minlength="6">
+            </div>
+            <div class="form-field">
+                <label><i data-lucide="lock"></i> Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="••••••••" required>
+            </div>
+            <div class="terms-checkbox" id="termsCheckboxWrapper">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="agreeTerms">
+                    <span class="checkmark"></span>
+                    <span class="terms-text">I agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span>
+                </label>
+            </div>
+            <button type="submit" class="auth-btn">
+                <i data-lucide="user-plus"></i> Create Account
+            </button>
+            <p class="auth-error hidden" id="signupError"></p>
+        </form>
+        
+        <div class="auth-divider">
+            <span>or continue with</span>
+        </div>
+        
+        <button id="googleSignIn" class="google-btn">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+        </button>
+    </div>
+</div>
+
+<!-- Onboarding Modal -->
+<div id="onboardingModal" class="modal hidden">
+    <div class="modal-content onboarding">
+        <div class="onboarding-header">
+            <i data-lucide="dumbbell"></i>
+            <h2>Welcome to FitFlow!</h2>
+            <p>Let's set up your personalized targets</p>
+        </div>
+        
+        <div class="onboarding-steps">
+            <!-- Step 1: Basic Info -->
+            <div class="step active" data-step="1">
+                <h3>Step 1: About You</h3>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>Age</label>
+                        <input type="number" id="onboardAge" placeholder="25" min="15" max="100">
+                    </div>
+                    <div class="form-field">
+                        <label>Gender</label>
+                        <select id="onboardGender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Height (cm)</label>
+                        <input type="number" id="onboardHeight" placeholder="170" min="100" max="250">
+                    </div>
+                    <div class="form-field">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="onboardWeight" placeholder="70" min="30" max="300" step="0.1">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Activity Level -->
+            <div class="step" data-step="2">
+                <h3>Step 2: Activity Level</h3>
+                <div class="activity-options">
+                    <label class="activity-option">
+                        <input type="radio" name="activity" value="1.2">
+                        <div class="activity-card">
+                            <i data-lucide="sofa"></i>
+                            <span class="activity-name">Sedentary</span>
+                            <span class="activity-desc">Little or no exercise</span>
+                        </div>
+                    </label>
+                    <label class="activity-option">
+                        <input type="radio" name="activity" value="1.375">
+                        <div class="activity-card">
+                            <i data-lucide="person-standing"></i>
+                            <span class="activity-name">Light</span>
+                            <span class="activity-desc">Exercise 1-3 days/week</span>
+                        </div>
+                    </label>
+                    <label class="activity-option">
+                        <input type="radio" name="activity" value="1.55" checked>
+                        <div class="activity-card">
+                            <i data-lucide="bike"></i>
+                            <span class="activity-name">Moderate</span>
+                            <span class="activity-desc">Exercise 3-5 days/week</span>
+                        </div>
+                    </label>
+                    <label class="activity-option">
+                        <input type="radio" name="activity" value="1.725">
+                        <div class="activity-card">
+                            <i data-lucide="dumbbell"></i>
+                            <span class="activity-name">Active</span>
+                            <span class="activity-desc">Exercise 6-7 days/week</span>
+                        </div>
+                    </label>
+                    <label class="activity-option">
+                        <input type="radio" name="activity" value="1.9">
+                        <div class="activity-card">
+                            <i data-lucide="flame"></i>
+                            <span class="activity-name">Very Active</span>
+                            <span class="activity-desc">Athlete / Physical job</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Step 3: Goal -->
+            <div class="step" data-step="3">
+                <h3>Step 3: Your Goal</h3>
+                <div class="goal-options">
+                    <label class="goal-option">
+                        <input type="radio" name="goal" value="lose">
+                        <div class="goal-card">
+                            <i data-lucide="trending-down"></i>
+                            <span class="goal-name">Lose Weight</span>
+                            <span class="goal-desc">-500 cal/day deficit</span>
+                        </div>
+                    </label>
+                    <label class="goal-option">
+                        <input type="radio" name="goal" value="maintain" checked>
+                        <div class="goal-card">
+                            <i data-lucide="minus"></i>
+                            <span class="goal-name">Maintain</span>
+                            <span class="goal-desc">Stay at current weight</span>
+                        </div>
+                    </label>
+                    <label class="goal-option">
+                        <input type="radio" name="goal" value="gain">
+                        <div class="goal-card">
+                            <i data-lucide="trending-up"></i>
+                            <span class="goal-name">Build Muscle</span>
+                            <span class="goal-desc">+300 cal/day surplus</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Step 4: Results -->
+            <div class="step" data-step="4">
+                <h3>Your Personalized Plan</h3>
+                <div class="results-card">
+                    <div class="bmi-result">
+                        <span class="bmi-value" id="resultBMI">--</span>
+                        <span class="bmi-label">BMI</span>
+                        <span class="bmi-category" id="resultBMICategory">--</span>
+                    </div>
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <span class="result-label">Daily Calories</span>
+                            <span class="result-value" id="resultCalories">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Protein</span>
+                            <span class="result-value" id="resultProtein">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Carbs</span>
+                            <span class="result-value" id="resultCarbs">--</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Fat</span>
+                            <span class="result-value" id="resultFat">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="onboarding-nav">
+            <button id="onboardBack" class="secondary" disabled><i data-lucide="arrow-left"></i> Back</button>
+            <div class="step-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <button id="onboardNext">Next <i data-lucide="arrow-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<!-- Chart.js for weight chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Canvas Confetti for celebrations -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<!-- Main app script -->
+<script src="script.js"></script>
+<!-- Initialize Lucide icons -->
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>
